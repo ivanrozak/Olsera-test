@@ -60,7 +60,7 @@ function ModalCustom() {
         open={open}
       >
         <DialogTitle sx={myStyle} onClose={handleClose}>
-          <Typography>Post Data</Typography>
+          <Typography>Create Post</Typography>
           <IconButton color='inherit' onClick={handleClose} aria-label='close'>
             <Close />
           </IconButton>

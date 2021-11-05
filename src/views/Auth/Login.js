@@ -56,6 +56,7 @@ function Login() {
             onChange={(e) => setEmail(e.target.value)}
             type='email'
             fullWidth
+            required
             variant='standard'
           />
           <Button type='submit' variant='contained' sx={{ mt: 5, mb: 2 }}>

@@ -29,24 +29,23 @@ function Home() {
 
   function loadItemList(page) {
     setLoading(true);
-    setTimeout(() => {
-      getItems(page)
-        .then((res) => {
-          const newPage = page + 1;
-          const newList = itemList.concat(res.data);
-          setItemList(newList);
-          setPage(newPage);
-          if (res.data.length === 0) {
-            setNoData(true);
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    }, 2000);
+
+    getItems(page)
+      .then((res) => {
+        const newPage = page + 1;
+        const newList = itemList.concat(res.data);
+        setItemList(newList);
+        setPage(newPage);
+        if (res.data.length === 0) {
+          setNoData(true);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }
   useEffect(() => {
     loadItemList();

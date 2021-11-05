@@ -5,12 +5,14 @@ import {
   Route,
   Link,
   useLocation,
+  useHistory,
 } from 'react-router-dom';
 import ModalCustom from '../../components/ModalCustom';
 import DialogViewData from '../../components/DialogViewData';
-import { Button } from '@mui/material';
+import { Button, IconButton } from '@mui/material';
 import { getItembyUser } from '../../API/API';
 import CardList from '../../components/CardList';
+import { Add } from '@mui/icons-material';
 
 export default function AdminPage() {
   return (
@@ -23,21 +25,22 @@ export default function AdminPage() {
 function ModalSwitch() {
   let location = useLocation();
   let background = location.state && location.state.background;
-  console.log(location);
-  console.log(background);
   return (
     <div>
       <Switch location={background || location}>
         <Route exact path='/admin' children={<PageView />} />
       </Switch>
-      {background && <Route path='/admin/:id' component={Modal} />}
-      {background && <Route path='/admin/read' component={DialogViewData} />}
+      {background && <Route path='/admin/create' component={Modal} />}
+      {background && (
+        <Route path='/admin/post/:id' component={DialogViewData} />
+      )}
     </div>
   );
 }
 
 function PageView() {
   let location = useLocation();
+  const history = useHistory();
   const [itemList, setItemList] = useState([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -57,24 +60,23 @@ function PageView() {
   function loadItemList() {
     let userId = JSON.parse(localStorage.getItem('user')).id;
     setLoading(true);
-    setTimeout(() => {
-      getItembyUser(userId, page)
-        .then((res) => {
-          const newPage = page + 1;
-          const newList = itemList.concat(res.data);
-          setItemList(newList);
-          setPage(newPage);
-          if (res.data.length === 0) {
-            setNoData(true);
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    }, 2000);
+
+    getItembyUser(userId, page)
+      .then((res) => {
+        const newPage = page + 1;
+        const newList = itemList.concat(res.data);
+        setItemList(newList);
+        setPage(newPage);
+        if (res.data.length === 0) {
+          setNoData(true);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }
   useEffect(() => {
     loadItemList();
@@ -82,6 +84,17 @@ function PageView() {
 
   const parentClick = (item) => {
     console.log('parent', item);
+    history.push({
+      pathname: `/admin/post/${item.id}`,
+      state: { background: location },
+      data: { item },
+    });
+  };
+  const createItem = () => {
+    history.push({
+      pathname: `/admin/create`,
+      state: { background: location },
+    });
   };
 
   return (
@@ -95,35 +108,17 @@ function PageView() {
       />
       <div
         style={{
-          display: 'flex',
-          justifyContent: 'space-evenly',
+          position: 'sticky',
+          bottom: 20,
         }}
       >
-        <Button
-          component={Link}
-          to={{
-            pathname: `/admin/post`,
-            // This is the trick! This link sets
-            // the `background` in location state.
-            state: { background: location },
-          }}
-          variant='contained'
+        <IconButton
+          sx={{ bgcolor: 'primary.main', color: 'white' }}
+          size='large'
+          onClick={createItem}
         >
-          Ini Button
-        </Button>
-        <Button
-          component={Link}
-          to={{
-            pathname: `/admin/read`,
-            // This is the trick! This link sets
-            // the `background` in location state.
-            state: { background: location },
-          }}
-          variant='contained'
-          onClick={parentClick}
-        >
-          Read
-        </Button>
+          <Add fontSize='inherit' />
+        </IconButton>
       </div>
     </div>
   );
