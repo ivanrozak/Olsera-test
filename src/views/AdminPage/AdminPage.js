@@ -3,13 +3,12 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link,
   useLocation,
   useHistory,
 } from 'react-router-dom';
 import ModalCustom from '../../components/ModalCustom';
 import DialogViewData from '../../components/DialogViewData';
-import { Button, IconButton } from '@mui/material';
+import { IconButton } from '@mui/material';
 import { getItembyUser } from '../../API/API';
 import CardList from '../../components/CardList';
 import { Add } from '@mui/icons-material';
@@ -34,6 +33,7 @@ function ModalSwitch() {
       {background && (
         <Route path='/admin/post/:id' component={DialogViewData} />
       )}
+      {background && <Route path='/admin/edit/:id' component={ModalEdit} />}
     </div>
   );
 }
@@ -90,6 +90,14 @@ function PageView() {
       data: { item },
     });
   };
+  const handleEdit = (item) => {
+    console.log(item);
+    history.push({
+      pathname: `/admin/edit/${item.id}`,
+      state: { background: location },
+      data: { item },
+    });
+  };
   const createItem = () => {
     history.push({
       pathname: `/admin/create`,
@@ -102,6 +110,7 @@ function PageView() {
       <CardList
         itemList={itemList}
         parentClick={parentClick}
+        handleEdit={handleEdit}
         loading={loading}
         noData={noData}
         noLikeButton={true}
@@ -125,5 +134,10 @@ function PageView() {
 }
 
 function Modal() {
-  return <ModalCustom />;
+  let userId = JSON.parse(localStorage.getItem('user')).id;
+  return <ModalCustom userId={userId} />;
+}
+function ModalEdit(props) {
+  let userId = JSON.parse(localStorage.getItem('user')).id;
+  return <ModalCustom userId={userId} forEdit={true} {...props} />;
 }

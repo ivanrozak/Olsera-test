@@ -1,10 +1,17 @@
 import React from 'react';
 import { Card, List, ListItem, IconButton, ListItemText } from '@mui/material';
-import { Favorite, FavoriteBorder } from '@mui/icons-material';
+import { Favorite, FavoriteBorder, Edit, Delete } from '@mui/icons-material';
 
 function CardList(props) {
-  const { itemList, parentClick, childClick, loading, noData, noLikeButton } =
-    props;
+  const {
+    itemList,
+    parentClick,
+    childClick,
+    handleEdit,
+    loading,
+    noData,
+    noLikeButton,
+  } = props;
   return (
     <section>
       <Card>
@@ -16,7 +23,15 @@ function CardList(props) {
                 secondary={item.body}
                 onClick={() => parentClick(item)}
               />
-              {noLikeButton ? null : (
+              {noLikeButton ? (
+                <IconButton
+                  onClick={() => handleEdit(item)}
+                  edge='end'
+                  aria-label='delete'
+                >
+                  <Edit />
+                </IconButton>
+              ) : (
                 <>
                   <IconButton
                     onClick={() => childClick(item)}
@@ -28,7 +43,6 @@ function CardList(props) {
                     ) : (
                       <FavoriteBorder />
                     )}
-                    {/*  */}
                   </IconButton>
                 </>
               )}
