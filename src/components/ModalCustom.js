@@ -8,6 +8,7 @@ import {
   IconButton,
   Typography,
   TextField,
+  CircularProgress,
 } from '@mui/material';
 import { useHistory, useParams } from 'react-router-dom';
 import { Close } from '@mui/icons-material';
@@ -21,6 +22,7 @@ function ModalCustom(props) {
   const [open, setOpen] = useState(true);
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
+  const [isLoading, setLoading] = useState(false);
   const handleClose = (e) => {
     e.stopPropagation();
     history.goBack();
@@ -43,10 +45,13 @@ function ModalCustom(props) {
         body: body,
       };
       patchData(payload, id).then((res) => {
+        setLoading(true);
         if (res.status === 200) {
+          setLoading(false);
           alert(`${res.status} - Success Patch Data!!`);
           history.goBack();
         } else {
+          setLoading(false);
           alert('Terjadi kesalahan!!');
         }
       });
@@ -57,10 +62,13 @@ function ModalCustom(props) {
         userId: userId,
       };
       postData(payload).then((res) => {
+        setLoading(true);
         if (res.status === 201) {
+          setLoading(false);
           alert(`${res.status} - Success Post Data!!`);
           history.goBack();
         } else {
+          setLoading(false);
           alert('Terjadi kesalahan!!');
         }
       });
@@ -121,7 +129,10 @@ function ModalCustom(props) {
               Cancel
             </Button>
             <Button type='submit' variant='contained'>
-              Save
+              Save{' '}
+              {isLoading ? (
+                <CircularProgress color='inherit' size={20} sx={{ ml: 2 }} />
+              ) : null}{' '}
             </Button>
           </DialogActions>
         </form>
